@@ -1,0 +1,15 @@
+{
+  "name": "integration-solutions-calidad",
+  "version": "1.0.0",
+  "description": "Pruebas unitarias, cobertura y analisis de seguridad - Integration Solutions",
+  "main": "sum.js",
+  "scripts": {
+    "test": "jest",
+    "test:report": "node scripts/run-tests.js",
+    "audit:security": "npm audit --audit-level=moderate"
+  },
+  "license": "ISC",
+  "devDependencies": {
+    "jest": "^29.7.0"
+  }
+}

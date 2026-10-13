@@ -1,0 +1,40 @@
+name: Calidad y Seguridad
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  quality:
+    runs-on: ubuntu-latest
+    env:
+      SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+      SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Instalar dependencias
+        run: npm install
+
+      - name: Pruebas unitarias y cobertura
+        run: npx jest --coverage --coverageReporters=lcov --coverageReporters=text
+
+      - name: npm audit
+        run: npm audit --audit-level=moderate
+        continue-on-error: true
+
+      - name: Snyk (dependencias)
+        if: ${{ env.SNYK_TOKEN != '' }}
+        uses: snyk/actions/node@master
+        continue-on-error: true
+
+      - name: SonarCloud
+        if: ${{ env.SONAR_TOKEN != '' }}
+        uses: SonarSource/sonarqube-scan-action@v5
